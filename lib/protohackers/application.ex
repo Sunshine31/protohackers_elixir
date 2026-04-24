@@ -7,11 +7,17 @@ defmodule Protohackers.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Protohackers.Worker.start_link(arg)
-      # {Protohackers.Worker, arg}
-      Protohackers.EchoServer
-    ]
+    children =
+      if Mix.env() == :test do
+        []
+      else
+        [
+          # Starts a worker by calling: Protohackers.Worker.start_link(arg)
+          # {Protohackers.Worker, arg}
+          {Protohackers.EchoServer, []},
+          {Protohackers.PrimeServer, [5002]}
+        ]
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
