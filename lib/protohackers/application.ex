@@ -15,7 +15,8 @@ defmodule Protohackers.Application do
           # Starts a worker by calling: Protohackers.Worker.start_link(arg)
           # {Protohackers.Worker, arg}
           {Protohackers.EchoServer, []},
-          {Protohackers.PrimeServer, [5002]}
+          {Protohackers.PrimeServer, [5002]},
+          {Protohackers.PriceServer, [port: 5003]}
         ]
       end
 
