@@ -4,15 +4,15 @@ defmodule Protohackers.PriceServerTest do
   # Порт, на котором будет запущен PriceServer
   @port 5003
 
-  setup do
-    # Запускаем сервер перед каждым тестом (если он не запущен глобально)
-    # Если запущен в application.ex, эту строку можно закомментировать
-    start_supervised!({Protohackers.PriceServer, @port})
-    :ok
-  end
+  # setup do
+  #   # Запускаем сервер перед каждым тестом (если он не запущен глобально)
+  #   # Если запущен в application.ex, эту строку можно закомментировать
+  #   start_supervised!({Protohackers.PriceServer, @port})
+  #   :ok
+  # end
 
   test "inserts and queries prices" do
-    {:ok, socket} = :gen_tcp.connect(~c"localhost", @port, [:binary, active: false])
+    {:ok, socket} = :gen_tcp.connect(~c"localhost", @port, mode: :binary, active: false)
 
     # 1. Вставляем цены (Insert: 'I', timestamp, price)
     # <<?I, 100::signed-32, 25::signed-32>>
@@ -54,7 +54,7 @@ defmodule Protohackers.PriceServerTest do
   end
 
   test "handles mean prices correctly" do
-    {:ok, socket} = :gen_tcp.connect(~c"localhost", @port, [:binary, active: false])
+    {:ok, socket} = :gen_tcp.connect(~c"localhost", @port, mode: :binary, active: false)
     :ok = :gen_tcp.send(socket, <<?I, 10::32, 10::32>>)
 
     :ok = :gen_tcp.send(socket, <<?I, 20::32, -50::32>>)
@@ -66,7 +66,7 @@ defmodule Protohackers.PriceServerTest do
   end
 
   test "handles empty range or mintime > maxtime" do
-    {:ok, socket} = :gen_tcp.connect(~c"localhost", @port, [:binary, active: false])
+    {:ok, socket} = :gen_tcp.connect(~c"localhost", @port, mode: :binary, active: false)
 
     # Отправляем запрос, где min > max
     :ok = :gen_tcp.send(socket, <<?Q, 500::32, 400::32>>)

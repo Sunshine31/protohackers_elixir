@@ -5,25 +5,23 @@ defmodule Protohackers.PriceServer do
   # Фиксированный размер сообщения по протоколу
   @msg_size 9
 
-  def start_link(args) do
-    GenServer.start_link(__MODULE__, args)
+  @spec start_link(keyword()) :: GenServer.on_start()
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts)
   end
 
   @impl true
-  def init(args) do
-    port =
-      case args do
-        p when is_integer(p) -> p
-        list when is_list(list) -> Keyword.get(list, :port, 5003)
-        _ -> 5003
-      end
+  def init(opts) do
+    port = Keyword.fetch!(opts, :port)
 
     {:ok, supervisor} = Task.Supervisor.start_link(max_children: 1000)
 
     listen_options = [
-      :binary,
+      ifaddr: {0, 0, 0, 0},
+      mode: :binary,
       active: false,
       reuseaddr: true,
+      exit_on_close: false,
       backlog: 128
     ]
 
